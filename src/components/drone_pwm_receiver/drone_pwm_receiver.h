@@ -27,8 +27,8 @@ public:
     };
 
     void setup();
-    void setThrottleYawPitchRoll(KlevebrandMaxJetDrone *drone);
-    void setFlightMode(KlevebrandMaxJetDrone *drone);
+    void setThrottle(KlevebrandMaxJetDrone *drone);
+    void setRudderAileron(KlevebrandMaxJetDrone *drone);
 
 private:
     PwmReceiver receiver;
