@@ -1,14 +1,19 @@
 #include "klevebrand_maxjet_drone.h"
 #include "pwm_receiver.h"
-#include "./components/drone_pwm_receiver/drone_pwm_receiver.h"
+#include "drone_pwm_receiver.h"
 
-uint8_t motor_pin_numbers[16] = { 3, 2, 7, 6};
+ServoDroneMotor motors[6];
 
-KlevebrandMaxJetDrone drone = KlevebrandMaxJetDrone(motor_pin_numbers);
+KlevebrandMaxJetDrone drone = KlevebrandMaxJetDrone(motors);
 DronePwmReceiver receiver = DronePwmReceiver(1, 4, 3, 2, 7);
 
 void setup()
 {
+  motors[0].setup(3);
+  motors[1].setup(2);
+  motors[2].setup(7);
+  motors[3].setup(6);
+
   // Startup the gyroscope and motors
   drone.setup();
 

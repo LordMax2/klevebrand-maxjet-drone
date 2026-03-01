@@ -2,31 +2,31 @@
 
 void KlevebrandMaxJetDrone::setup()
 {
-    Serial.begin(SERIAL_BAUD_RATE);
+    _processor.setup();
 
-    if (!Serial)
-    {
-        Serial.println("FAILED TO START SERIAL...");
-    }
-    while (!Serial)
-        ;
+    _processor.print("STARTING DRONE...");
 
-    Serial.println("STARTING DRONE...");
+    _gyro.setup();
 
-    gyro.setup();
-
-    eeprom_pid_repository.setup();
+    pid_repository->setup();
 
     setupMotors();
 
     setFlightModeAcro();
 
-    Serial.println("DRONE STARTED!");
+    processor->print("DRONE STARTED!");
 }
+
+static long last_run_start_micros_timestamp = 0;
 
 void KlevebrandMaxJetDrone::run()
 {
-    long start_micros_timestamp = micros();
+    if (delayToKeepFeedbackLoopHz(last_run_start_micros_timestamp) > 0)
+    {
+        return;
+    }
+
+    last_run_start_micros_timestamp = _processor.microsecondsTimestamp();
 
     // Get the latest data from the gyroscope
     updateGyro();
@@ -37,7 +37,7 @@ void KlevebrandMaxJetDrone::run()
         resetPid();
         stopMotors();
 
-        Serial.println("LOST CONNECTION");
+        // Serial.println("LOST CONNECTION");
     }
     else if (!isMotorsEnabled())
     {
@@ -45,15 +45,15 @@ void KlevebrandMaxJetDrone::run()
         resetPid();
         stopMotors();
 
-        Serial.println("MOTORS DISABLED");
+        // Serial.println("MOTORS DISABLED");
     }
     else
     {
         // Increment the integral part of the PID loop
         if (throttle > PID_THROTTLE_THRESHOLD)
         {
-            runPidOptimizer();
-            calculatePidIntegral(gyro.roll(), gyro.pitch(), gyro.yaw());
+            runPidOptimizer(processor->millisecondsTimestamp());
+            calculatePidIntegral(_gyro.roll(), _gyro.pitch(), _gyro.yaw());
         }
         else
         {
@@ -67,13 +67,11 @@ void KlevebrandMaxJetDrone::run()
         // printGyro();
 
         // Run the motors with the calculated PID throttle
-        runMotors(gyro.roll(), gyro.pitch(), gyro.yaw());
+        runMotors(_gyro.roll(), _gyro.pitch(), _gyro.yaw());
 
-        savePidErrors(gyro.roll(), gyro.pitch(), gyro.yaw());
-    
+        savePidErrors(_gyro.roll(), _gyro.pitch(), _gyro.yaw());
+
         persistPidConstants();
-
-        delayToKeepFeedbackLoopHz(start_micros_timestamp);
     }
 }
 

@@ -27,11 +27,11 @@ void DronePwmReceiver::setRudderAileron(KlevebrandMaxJetDrone *drone)
         desired_roll_angle = 0;
     }
 
-    drone->aileron_left().writeMicroseconds(desired_pitch_angle + desired_roll_angle);
-    drone->aileron_right().writeMicroseconds(desired_pitch_angle - desired_roll_angle);
+    drone->aileron_left().setSpeed(desired_pitch_angle + desired_roll_angle);
+    drone->aileron_right().setSpeed(desired_pitch_angle - desired_roll_angle);
 
-    drone->rudder_left().writeMicroseconds(desired_yaw_angle);
-    drone->rudder_right().writeMicroseconds(-desired_yaw_angle);
+    drone->rudder_left().setSpeed(desired_yaw_angle);
+    drone->rudder_right().setSpeed(-desired_yaw_angle);
 }
 
 void DronePwmReceiver::setup()
