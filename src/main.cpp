@@ -13,6 +13,9 @@ void setup()
   motors[1].setup(2);
   motors[2].setup(7);
   motors[3].setup(6);
+  motors[3].setup(6);
+  motors[3].setup(6);
+  motors[3].setup(6);
 
   // Startup the gyroscope and motors
   drone.setup();
