@@ -12,8 +12,8 @@ void setup()
   motors[0].setup(3);
   motors[1].setup(45);
   motors[2].setup(46);
-  motors[3].setup(11);
-  motors[4].setup(12);
+  motors[3].setup(12);
+  motors[4].setup(11);
   motors[5].setup(10);
   motors[6].setup(9);
 
