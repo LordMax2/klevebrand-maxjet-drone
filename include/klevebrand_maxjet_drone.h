@@ -2,28 +2,29 @@
 #define KLEVEBRAND_MAXJET_DRONE_H
 
 #include <Arduino.h>
-#include "template_gyro_drone.h"
+#include "template_drone.h"
 #include "airplane_vtail_pid.h"
 #include "bno08x_drone_gyro.h"
 #include "eeprom_pid_repository.h"
 #include "hardware_processor_arduino.h"
 #include "servo_drone_motor.h"
 
-class KlevebrandMaxJetDrone : public TemplateGyroDrone<AirplaneVtailPid>
+class KlevebrandMaxJetDrone : public TemplateDrone<AirplaneVtailPid>
 {
 private:
     Bno08xDroneGyro _gyro;
     EepromPidRepository _pid_repository;
     HardwareProcessorArduino _processor;
     ServoDroneMotor *_motors;
+    BaseDronePosition _position;
 
 public:
-    KlevebrandMaxJetDrone(ServoDroneMotor *motors) : TemplateGyroDrone<AirplaneVtailPid>(500, 200, 10000, &_processor, &_gyro, &_pid_repository), _gyro(10)
+    KlevebrandMaxJetDrone(ServoDroneMotor *motors) : TemplateDrone<AirplaneVtailPid>(500, 200, 10000, &_processor, &_gyro, &_pid_repository, &_position), _gyro(10)
     {
         this->_motors = motors;
     }
     void setup() override;
-    void run() override;
+    bool run() override;
     void runMotors(float gyro_roll, float gyro_pitch, float gyro_yaw) override;
 
     ServoDroneMotor motor() const { return _motors[0]; };

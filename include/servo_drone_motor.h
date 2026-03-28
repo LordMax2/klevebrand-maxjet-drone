@@ -17,11 +17,11 @@ public:
 
     void setSpeed(float percentage) override
     {
-        int microseconds = map(percentage, 0, 100, 1000, 2000);
+        int microseconds = map(percentage, 0, 100, 10, 170);
 
-        microseconds = constrain(microseconds, 1000, 2000);
+        microseconds = constrain(microseconds, 0, 180);
 
-        _motor.writeMicroseconds(microseconds);
+        _motor.write(microseconds);
     }
 private:
     Servo _motor;

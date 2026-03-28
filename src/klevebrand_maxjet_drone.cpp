@@ -19,11 +19,11 @@ void KlevebrandMaxJetDrone::setup()
 
 static long last_run_start_micros_timestamp = 0;
 
-void KlevebrandMaxJetDrone::run()
+bool KlevebrandMaxJetDrone::run()
 {
     if (delayToKeepFeedbackLoopHz(last_run_start_micros_timestamp) > 0)
     {
-        return;
+        return false;
     }
 
     last_run_start_micros_timestamp = _processor.microsecondsTimestamp();
@@ -50,7 +50,7 @@ void KlevebrandMaxJetDrone::run()
     else
     {
         // Increment the integral part of the PID loop
-        if (throttle > PID_THROTTLE_THRESHOLD)
+        if (getThrottle() > PID_THROTTLE_THRESHOLD)
         {
             runPidOptimizer(processor->millisecondsTimestamp());
             calculatePidIntegral(_gyro.roll(), _gyro.pitch(), _gyro.yaw());
@@ -73,6 +73,8 @@ void KlevebrandMaxJetDrone::run()
 
         persistPidConstants();
     }
+
+    return true;
 }
 
 void KlevebrandMaxJetDrone::runMotors(float gyro_roll, float gyro_pitch, float gyro_yaw)
