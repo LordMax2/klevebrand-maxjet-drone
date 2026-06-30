@@ -1,5 +1,4 @@
-#ifndef HARDWARE_PROCESSOR_ARDUINO_H
-#define HARDWARE_PROCESSOR_ARDUINO_H
+#pragma once
 
 #include "Arduino.h"
 #include "base_hardware_processor.h"
@@ -42,5 +41,3 @@ public:
     Serial.println(array);
   }
 };
-
-#endif // HARDWARE_PROCESSOR_ARDUINO_H

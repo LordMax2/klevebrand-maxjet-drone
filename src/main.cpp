@@ -1,15 +1,17 @@
+#include <receivers/pwm_receiver_controller.h>
+
 #include "klevebrand_maxjet_drone.h"
-#include "pwm_receiver.h"
-#include "drone_pwm_receiver.h"
 
-ServoDroneMotor motors[7];
+static auto receiver = PwmReceiverController(1, 4, 3, 2, 7);
 
-KlevebrandMaxJetDrone drone = KlevebrandMaxJetDrone(motors);
-DronePwmReceiver receiver = DronePwmReceiver(1, 4, 3, 2, 7);
+static ServoDroneMotor motors[7];
+static constexpr int motor_pins[7] = {2, 3, 6, 7, -1, -1, -1};
+
+static KlevebrandMaxJetDrone drone(motors, motor_pins);
 
 void setup()
 {
-  motors[0].setup(3);
+  drone.motor().setup(5);
   motors[1].setup(45);
   motors[2].setup(46);
   motors[3].setup(12);
@@ -17,26 +19,19 @@ void setup()
   motors[5].setup(10);
   motors[6].setup(9);
 
+  drone.motor().setSpeed(0);
+
   // Startup the gyroscope and motors
   drone.setup();
 
   // Startup the reciever
-  receiver.setup();
+  PwmReceiverController::setup();
 }
 
 void loop()
 {
   // Set drone flight values from the receiver
-  //receiver.setThrottle(&drone);
-
-  receiver.setRudderAileron(&drone);
-
-  //drone.rudder_left().setSpeed(50);
-  //drone.rudder_right().setSpeed(50);
-  //drone.aileron_left().setSpeed(50);
-  //drone.aileron_right().setSpeed(50);
-  //drone.flap_left().setSpeed(50);
-  //drone.flap_right().setSpeed(50);
+  receiver.apply(&drone);
 
   // Run the drone feedback-loop
   drone.run();
