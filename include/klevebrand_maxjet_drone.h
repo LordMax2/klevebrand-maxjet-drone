@@ -6,20 +6,21 @@
 #include "hardware_processor_arduino.h"
 #include "drone_components/servo_drone_motor.h"
 
+static constexpr int MOTOR_PIN_COUNT = 7;
+
 class KlevebrandMaxJetDrone : public TemplateDrone<AirplaneVtailPid>
 {
-    static constexpr int motor_pin_count = 7;
-    int _motor_pins[motor_pin_count]{};
+    int _motor_pins[MOTOR_PIN_COUNT]{};
     Bno08xDroneGyro _gyro;
     HardwareProcessorArduino _processor;
     ServoDroneMotor* _motors;
     BaseDronePosition _position;
 
 public:
-    KlevebrandMaxJetDrone(ServoDroneMotor* motors, const int motor_pins[motor_pin_count])
+    KlevebrandMaxJetDrone(ServoDroneMotor* motors, const int motor_pins[MOTOR_PIN_COUNT])
         : TemplateDrone(500, 200, &_processor, &_gyro, &_position), _gyro(10), _motors(motors)
     {
-        for (int i = 0; i < motor_pin_count; i++)
+        for (int i = 0; i < MOTOR_PIN_COUNT; i++)
         {
             _motor_pins[i] = motor_pins[i];
         }

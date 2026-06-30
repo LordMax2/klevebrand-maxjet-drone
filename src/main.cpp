@@ -4,8 +4,8 @@
 
 static auto receiver = PwmReceiverController(1, 4, 3, 2, 7);
 
-static ServoDroneMotor motors[7];
-static constexpr int motor_pins[7] = {2, 3, 6, 7, -1, -1, -1};
+static ServoDroneMotor motors[MOTOR_PIN_COUNT];
+static constexpr int motor_pins[MOTOR_PIN_COUNT] = {2, 3, 6, 7, -1, -1, -1};
 
 static KlevebrandMaxJetDrone drone(motors, motor_pins);
 

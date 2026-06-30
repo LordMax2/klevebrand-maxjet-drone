@@ -11,7 +11,7 @@ void PwmReceiverControlModeAcro::applyThrottleRudderAileron(KlevebrandMaxJetDron
                                                            const int yaw_pwm, const int pitch_pwm, const int roll_pwm,
                                                            const int flap_pwm) const
 {
-    const float throttle_value_normalized = map(throttle_pwm, 1000, 2000, THROTTLE_MINIMUM, THROTTLE_MAXIMUM);
+    const float throttle_value_normalized = map(throttle_pwm, 1000, 2000, AirplaneVtailPid::THROTTLE_MINIMUM, AirplaneVtailPid::THROTTLE_MAXIMUM);
     drone->motor().setSpeed(throttle_value_normalized);
 
     float desired_yaw_angle_right = map(yaw_pwm, 1000, 2000, 90, 0);

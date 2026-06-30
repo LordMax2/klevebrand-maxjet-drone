@@ -35,7 +35,7 @@ bool KlevebrandMaxJetDrone::run()
     updateGyro();
 
     // Increment the integral part of the PID loop
-    if (getThrottle() > PID_THROTTLE_THRESHOLD)
+    if (getThrottle() > AirplaneVtailPid::PID_THROTTLE_THRESHOLD)
     {
         runPidOptimizer(processor->millisecondsTimestamp());
         calculatePidIntegral(_gyro.roll(), _gyro.pitch(), _gyro.yaw());

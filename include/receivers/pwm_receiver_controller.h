@@ -3,7 +3,7 @@
 #include "pwm_control_modes/pwm_receiver_control_mode_acro.h"
 #include "pwm_control_modes/pwm_receiver_control_mode_none.h"
 
-#define CHANNEL_COUNT 8
+static constexpr uint16_t CHANNEL_COUNT = 8;
 
 class PwmReceiverController
 {
