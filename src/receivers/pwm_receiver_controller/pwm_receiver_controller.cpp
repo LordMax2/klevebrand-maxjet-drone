@@ -1,6 +1,6 @@
 #include "receivers/pwm_receiver_controller.h"
 
-#include "../../../include/drone_components/flight_mode_acro_local.h"
+#include "drone_components/flight_mode_acro_local.h"
 #include <PinChangeInterrupt.h>
 
 constexpr int PWM_SIGNAL_MINIMUM = 1000;
