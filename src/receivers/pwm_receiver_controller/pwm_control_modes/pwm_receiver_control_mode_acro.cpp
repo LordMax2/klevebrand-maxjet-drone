@@ -36,18 +36,18 @@ void PwmReceiverControlModeAcro::applyThrottleRudderAileron(KlevebrandMaxJetDron
     float desired_aileron_right = map(desired_roll_angle_right + desired_pitch_angle_right, 0, 180, 0, 90);
     float desired_aileron_left = map(desired_roll_angle_left + desired_pitch_angle_left, 0, 180, 0, 90);
 
-    drone->aileron_left().setSpeed(desired_aileron_left);
-    drone->aileron_right().setSpeed(desired_aileron_right);
+    drone->aileronLeft().setSpeed(desired_aileron_left);
+    drone->aileronRight().setSpeed(desired_aileron_right);
 
-    drone->rudder_right().setSpeed(desired_yaw_angle_right);
-    drone->rudder_left().setSpeed(desired_yaw_angle_left);
+    drone->rudderRight().setSpeed(desired_yaw_angle_right);
+    drone->rudderLeft().setSpeed(desired_yaw_angle_left);
 
     const int flap_pwm = PwmReceiverController::getChannelValue(6);
     float desired_flap_right = map(flap_pwm, 1000, 2000, 50, 0);
     float desired_flap_left = map(flap_pwm, 1000, 2000, 50, 100);
 
-    drone->flap_right().setSpeed(desired_flap_right);
-    drone->flap_left().setSpeed(desired_flap_left);
+    drone->flapRight().setSpeed(desired_flap_right);
+    drone->flapLeft().setSpeed(desired_flap_left);
 }
 
 float PwmReceiverControlModeAcro::normalizePwm(const int pwm_microseconds)

@@ -91,12 +91,12 @@ void KlevebrandMaxJetDrone::setupMotors()
 void KlevebrandMaxJetDrone::stopMotors()
 {
     motor().setSpeed(0);
-    aileron_left().setSpeed(0);
-    aileron_right().setSpeed(0);
-    rudder_left().setSpeed(0);
-    rudder_right().setSpeed(0);
-    flap_left().setSpeed(0);
-    flap_right().setSpeed(0);
+    aileronLeft().setSpeed(0);
+    aileronRight().setSpeed(0);
+    rudderLeft().setSpeed(0);
+    rudderRight().setSpeed(0);
+    flapLeft().setSpeed(0);
+    flapRight().setSpeed(0);
 }
 
 void KlevebrandMaxJetDrone::runMotors(const float gyro_roll, const float gyro_pitch, const float gyro_yaw,
@@ -111,23 +111,23 @@ void KlevebrandMaxJetDrone::runMotors(const float gyro_roll, const float gyro_pi
 void KlevebrandMaxJetDrone::attachMotors() const
 {
     motor().attach();
-    aileron_left().attach();
-    aileron_right().attach();
-    rudder_left().attach();
-    rudder_right().attach();
-    flap_left().attach();
-    flap_right().attach();
+    aileronLeft().attach();
+    aileronRight().attach();
+    rudderLeft().attach();
+    rudderRight().attach();
+    flapLeft().attach();
+    flapRight().attach();
 }
 
 void KlevebrandMaxJetDrone::detachMotors() const
 {
     motor().detach();
-    aileron_left().detach();
-    aileron_right().detach();
-    rudder_left().detach();
-    rudder_right().detach();
-    flap_left().detach();
-    flap_right().detach();
+    aileronLeft().detach();
+    aileronRight().detach();
+    rudderLeft().detach();
+    rudderRight().detach();
+    flapLeft().detach();
+    flapRight().detach();
 }
 
 void KlevebrandMaxJetDrone::enableMotors()

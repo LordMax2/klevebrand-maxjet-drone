@@ -44,15 +44,15 @@ public:
 
     ServoDroneMotor& motor() const { return _motors[0]; }
 
-    ServoDroneMotor& aileron_left() const { return _motors[1]; }
+    ServoDroneMotor& aileronLeft() const { return _motors[1]; }
 
-    ServoDroneMotor& aileron_right() const { return _motors[2]; }
+    ServoDroneMotor& aileronRight() const { return _motors[2]; }
 
-    ServoDroneMotor& rudder_left() const { return _motors[3]; }
+    ServoDroneMotor& rudderLeft() const { return _motors[3]; }
 
-    ServoDroneMotor& rudder_right() const { return _motors[4]; }
+    ServoDroneMotor& rudderRight() const { return _motors[4]; }
 
-    ServoDroneMotor& flap_left() const { return _motors[5]; }
+    ServoDroneMotor& flapLeft() const { return _motors[5]; }
 
-    ServoDroneMotor& flap_right() const { return _motors[6]; }
+    ServoDroneMotor& flapRight() const { return _motors[6]; }
 };
