@@ -1,13 +1,12 @@
 #pragma once
 
 #include "Arduino.h"
-#include "base_drone_motor.h"
 #include <Servo.h>
 
-class ServoDroneMotor : public BaseDroneMotor
+class ServoDroneMotor
 {
 public:
-    ServoDroneMotor() : BaseDroneMotor() {}
+    ServoDroneMotor() = default;
 
     void setup(int pin)
     {
@@ -16,7 +15,7 @@ public:
         attach();
     }
 
-    void setSpeed(float percentage) override
+    void setSpeed(float percentage)
     {
         if (!_is_attached)
         {

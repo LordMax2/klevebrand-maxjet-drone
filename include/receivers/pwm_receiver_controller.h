@@ -1,9 +1,10 @@
 #pragma once
 
+#include "../klevebrand_maxjet_drone.h"
 #include "pwm_control_modes/pwm_receiver_control_mode_acro.h"
 #include "pwm_control_modes/pwm_receiver_control_mode_none.h"
 
-static constexpr uint16_t CHANNEL_COUNT = 8;
+#define CHANNEL_COUNT 8
 
 class PwmReceiverController
 {
@@ -28,7 +29,8 @@ public:
 
     static void setup();
     static bool wantsControl();
-    void apply(KlevebrandMaxJetDrone *drone) const;
+    static int getChannelValue(int channel_number);
+    void apply(KlevebrandMaxJetDrone* drone) const;
 
 private:
     int _throttle_receiver_channel_number;
@@ -41,9 +43,7 @@ private:
     PwmReceiverControlModeAcro _acro_control_mode;
     const BasePwmReceiverControlMode* _control_modes[2]{};
 
-    static void setFlightMode(KlevebrandMaxJetDrone *drone, int flight_mode_pwm);
-
-    static int getChannelValue(int channel_number);
+    static void setFlightMode(KlevebrandMaxJetDrone* drone, int flight_mode_pwm);
 
     static void recordPinChangePulseWidth(int channel_number);
     static void recordPinChangePulseWidthChannel1() { recordPinChangePulseWidth(1); };

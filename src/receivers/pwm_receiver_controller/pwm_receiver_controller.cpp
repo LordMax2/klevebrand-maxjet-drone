@@ -1,6 +1,7 @@
 #include "receivers/pwm_receiver_controller.h"
 
 #include "drone_components/flight_mode_acro_local.h"
+#include "drone_components/flight_mode_none_local.h"
 #include <PinChangeInterrupt.h>
 
 constexpr int PWM_SIGNAL_MINIMUM = 1000;
@@ -13,7 +14,7 @@ int PwmReceiverController::_channel_number_to_gpio_map_array[CHANNEL_COUNT] = {
 unsigned long PwmReceiverController::_pulse_start_micros[CHANNEL_COUNT] = {0, 0, 0, 0, 0, 0, 0, 0};
 int PwmReceiverController::_pulse_widths[CHANNEL_COUNT] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-static auto none_flight_mode = BaseControlMode();
+static auto none_flight_mode = FlightModeNoneLocal();
 static auto acro_local = FLightModeAcroLocal();
 
 bool PwmReceiverController::wantsControl()
@@ -28,15 +29,14 @@ void PwmReceiverController::apply(KlevebrandMaxJetDrone* drone) const
     const int pitch_pwm = getChannelValue(_pitch_receiver_channel_number);
     const int roll_pwm = getChannelValue(_roll_receiver_channel_number);
     const int flight_mode_pwm = getChannelValue(_flight_mode_receiver_channel_number);
-    const int flap_pwm = getChannelValue(6);
 
     setFlightMode(drone, flight_mode_pwm);
 
     for (const auto* mode : _control_modes)
     {
-        if (drone->getControlModeType() == mode->controlModeType())
+        if (drone->getControlMode() == mode->controlModeType())
         {
-            mode->applyThrottleRudderAileron(drone, throttle_pwm, yaw_pwm, pitch_pwm, roll_pwm, flap_pwm);
+            mode->applyThrottleRudderAileron(drone, throttle_pwm, yaw_pwm, pitch_pwm, roll_pwm);
             return;
         }
     }
@@ -51,15 +51,11 @@ void PwmReceiverController::setFlightMode(KlevebrandMaxJetDrone* drone, const in
         drone->activateControlMode(&none_flight_mode);
     }
     else if (flight_mode_pwm >= PWM_SIGNAL_MID_LOW && flight_mode_pwm < PWM_SIGNAL_MID_HIGH && drone->
-        getControlModeType() != acro)
+        getControlMode() != acro)
     {
         drone->activateControlMode(&acro_local);
 
         drone->enableMotors();
-    }
-    else if (flight_mode_pwm >= PWM_SIGNAL_MID_HIGH && drone->getControlModeType() != auto_level)
-    {
-        // Nothing for now
     }
 }
 

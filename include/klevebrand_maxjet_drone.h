@@ -1,42 +1,58 @@
 #pragma once
 
+#include "drone_components/servo_drone_motor.h"
 #include "template_drone.h"
 #include "drone_components/airplane_vtail_pid.h"
 #include "bno08x_drone_gyro.h"
 #include "hardware_processor_arduino.h"
-#include "drone_components/servo_drone_motor.h"
+#include "quadcopter_position.h"
 
-static constexpr int MOTOR_PIN_COUNT = 7;
+using MaxJetGyro = Bno08xDroneGyro;
+using MaxJetProcessor = HardwareProcessorArduino;
+using MaxJetPosition = QuadcopterPosition<MaxJetGyro>;
+using MaxJetPid = AirplaneVtailPid;
+using MaxJetDroneBase = TemplateDrone<MaxJetPid, MaxJetPosition, MaxJetGyro, MaxJetProcessor>;
 
-class KlevebrandMaxJetDrone : public TemplateDrone<AirplaneVtailPid>
+class KlevebrandMaxJetDrone : public MaxJetDroneBase
 {
-    int _motor_pins[MOTOR_PIN_COUNT]{};
-    Bno08xDroneGyro _gyro;
-    HardwareProcessorArduino _processor;
     ServoDroneMotor* _motors;
-    BaseDronePosition _position;
+    static constexpr int motor_pin_count = 7;
+    int _motor_pins[motor_pin_count]{};
+
+    void attachMotors() const;
+
+    void detachMotors() const;
 
 public:
-    KlevebrandMaxJetDrone(ServoDroneMotor* motors, const int motor_pins[MOTOR_PIN_COUNT])
-        : TemplateDrone(500, 200, &_processor, &_gyro, &_position), _gyro(10), _motors(motors)
-    {
-        for (int i = 0; i < MOTOR_PIN_COUNT; i++)
-        {
-            _motor_pins[i] = motor_pins[i];
-        }
-    }
+    static constexpr int gyro_reset_pin = 10;
 
-    void setup() override;
-    void setupMotors() override {};
-    bool run() override;
-    void runMotors(float gyro_roll, float gyro_pitch, float gyro_yaw, float delta_time_seconds) override;
-    void stopMotors() override {};
+    KlevebrandMaxJetDrone(ServoDroneMotor* motors, const int motor_pins[motor_pin_count]);
 
-    ServoDroneMotor &motor() const { return _motors[0]; };
-    ServoDroneMotor &aileron_left() const { return _motors[1]; };
-    ServoDroneMotor &aileron_right() const { return _motors[2]; };
-    ServoDroneMotor &rudder_left() const { return _motors[3]; };
-    ServoDroneMotor &rudder_right() const { return _motors[4]; };
-    ServoDroneMotor &flap_left() const { return _motors[5]; };
-    ServoDroneMotor &flap_right() const { return _motors[6]; };
+    void setup();
+
+    bool run();
+
+    void runMotors(float gyro_roll, float gyro_pitch, float gyro_yaw, float delta_time_seconds);
+
+    void enableMotors();
+
+    void disableMotors();
+
+    void setupMotors();
+
+    void stopMotors();
+
+    ServoDroneMotor& motor() const { return _motors[0]; }
+
+    ServoDroneMotor& aileron_left() const { return _motors[1]; }
+
+    ServoDroneMotor& aileron_right() const { return _motors[2]; }
+
+    ServoDroneMotor& rudder_left() const { return _motors[3]; }
+
+    ServoDroneMotor& rudder_right() const { return _motors[4]; }
+
+    ServoDroneMotor& flap_left() const { return _motors[5]; }
+
+    ServoDroneMotor& flap_right() const { return _motors[6]; }
 };

@@ -1,6 +1,12 @@
 #include "receivers/pwm_control_modes/pwm_receiver_control_mode_acro.h"
 
+#include "receivers/pwm_receiver_controller.h"
+
 #include <Arduino.h>
+
+constexpr int PWM_DEADZONE = 20;
+
+constexpr float ACRO_EXPONENTIAL_INCREASE_RATE = 0.5f;
 
 ControlMode_t PwmReceiverControlModeAcro::controlModeType() const
 {
@@ -8,10 +14,11 @@ ControlMode_t PwmReceiverControlModeAcro::controlModeType() const
 }
 
 void PwmReceiverControlModeAcro::applyThrottleRudderAileron(KlevebrandMaxJetDrone* drone, const int throttle_pwm,
-                                                           const int yaw_pwm, const int pitch_pwm, const int roll_pwm,
-                                                           const int flap_pwm) const
+                                                           const int yaw_pwm, const int pitch_pwm,
+                                                           const int roll_pwm) const
 {
-    const float throttle_value_normalized = map(throttle_pwm, 1000, 2000, AirplaneVtailPid::THROTTLE_MINIMUM, AirplaneVtailPid::THROTTLE_MAXIMUM);
+    const float throttle_value_normalized = map(throttle_pwm, 1000, 2000, AirplaneVtailPid::THROTTLE_MINIMUM,
+                                                AirplaneVtailPid::THROTTLE_MAXIMUM);
     drone->motor().setSpeed(throttle_value_normalized);
 
     float desired_yaw_angle_right = map(yaw_pwm, 1000, 2000, 90, 0);
@@ -35,9 +42,30 @@ void PwmReceiverControlModeAcro::applyThrottleRudderAileron(KlevebrandMaxJetDron
     drone->rudder_right().setSpeed(desired_yaw_angle_right);
     drone->rudder_left().setSpeed(desired_yaw_angle_left);
 
+    const int flap_pwm = PwmReceiverController::getChannelValue(6);
     float desired_flap_right = map(flap_pwm, 1000, 2000, 50, 0);
     float desired_flap_left = map(flap_pwm, 1000, 2000, 50, 100);
 
     drone->flap_right().setSpeed(desired_flap_right);
     drone->flap_left().setSpeed(desired_flap_left);
+}
+
+float PwmReceiverControlModeAcro::normalizePwm(const int pwm_microseconds)
+{
+    const int centered = pwm_microseconds - 1500;
+
+    if (abs(centered) < PWM_DEADZONE)
+    {
+        return 0.0f;
+    }
+
+    return constrain(centered / 500.0f, -1.0f, 1.0f);
+}
+
+float PwmReceiverControlModeAcro::applyExpo(const float input, const float expo)
+{
+    const float sign = (input >= 0.0f) ? 1.0f : -1.0f;
+    const float abs_input = abs(input);
+
+    return sign * (abs_input * abs_input * abs_input * expo + abs_input * (1.0f - expo));
 }

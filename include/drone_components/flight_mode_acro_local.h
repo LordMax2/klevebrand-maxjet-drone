@@ -1,21 +1,26 @@
 #pragma once
 
-#include "base_control_mode.h"
+#include "klevebrand_maxjet_drone.h"
 
-class FLightModeAcroLocal : public BaseControlMode
+class FLightModeAcroLocal
 {
 public:
-    int pidConstantsStorageKey() const override
-    {
-        return 1152;
-    }
-
-    ControlMode_t type() const override
+    ControlMode_t type()
     {
         return acro;
     }
 
-    PidConstants_t pidConstants() const override
+    const char* name()
+    {
+        return "acro";
+    }
+
+    bool yawCompassMode()
+    {
+        return false;
+    }
+
+    PidConstants_t pidConstants()
     {
         return {
             0.04f, 0.25f, 0.004f,
@@ -24,18 +29,20 @@ public:
         };
     }
 
-    void activate(BaseDrone* drone, BaseDroneGyro* gyro, BaseHardwareProcessor* processor) const override
+    void activate(MaxJetDroneBase* drone)
     {
-        gyro->reset();
+        drone->gyro.reset();
 
-        processor->sleepMilliseconds(1000);
+        drone->processor.sleepMilliseconds(1000);
 
-        static_cast<Bno08xDroneGyro*>(gyro)->setModeAcro();
+        drone->gyro.setModeAcro();
 
-        processor->sleepMilliseconds(1000);
+        drone->processor.sleepMilliseconds(1000);
 
-        gyro->reload();
+        drone->gyro.reload();
 
-        drone->setDesiredYawAngle(gyro->yaw());
+        drone->setDesiredYawAngle(drone->getYaw());
     }
 };
+
+static_assert(ControlModeConcept<FLightModeAcroLocal, MaxJetPid, MaxJetPosition, MaxJetGyro, MaxJetProcessor>);

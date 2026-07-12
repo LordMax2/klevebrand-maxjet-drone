@@ -1,19 +1,32 @@
 #include "klevebrand_maxjet_drone.h"
 
+#include "drone_components/flight_mode_none_local.h"
+
+KlevebrandMaxJetDrone::KlevebrandMaxJetDrone(ServoDroneMotor* motors, const int motor_pins[motor_pin_count])
+    : MaxJetDroneBase(500, 200, gyro_reset_pin), _motors(motors)
+{
+    for (int i = 0; i < motor_pin_count; i++)
+    {
+        _motor_pins[i] = motor_pins[i];
+    }
+}
+
 void KlevebrandMaxJetDrone::setup()
 {
-    _processor.setup();
+    processor.setup();
 
-    _processor.print("STARTING DRONE...");
+    processor.print("STARTING DRONE...");
 
-    _gyro.setup();
+    position.setup();
+
+    gyro.setup();
 
     setupMotors();
 
-    static auto none_flight_mode = BaseControlMode();
+    static auto none_flight_mode = FlightModeNoneLocal();
     activateControlMode(&none_flight_mode);
 
-    processor->print("DRONE STARTED!");
+    processor.print("DRONE STARTED!");
 }
 
 static unsigned long last_run_start_microseconds_timestamp = 0;
@@ -23,6 +36,8 @@ bool KlevebrandMaxJetDrone::run()
 {
     if (delayToKeepFeedbackLoopHz(last_run_start_microseconds_timestamp - last_gyro_fetch_duration) > 0)
     {
+        position.run(false);
+
         return false;
     }
 
@@ -31,35 +46,102 @@ bool KlevebrandMaxJetDrone::run()
     const float delta_time_seconds = delta_time / 1000000.0f;
     last_run_start_microseconds_timestamp = current_time;
 
-    // Get the latest data from the gyroscope
-    updateGyro();
+    (void)updateGyro();
 
-    // Increment the integral part of the PID loop
+    last_gyro_fetch_duration = timestampMicroseconds() - current_time;
+
+    position.run(true);
+
+    const float gyro_roll = getRoll();
+    const float gyro_pitch = getPitch();
+    const float gyro_yaw = getYaw();
+
     if (getThrottle() > AirplaneVtailPid::PID_THROTTLE_THRESHOLD)
     {
-        runPidOptimizer(processor->millisecondsTimestamp());
-        calculatePidIntegral(_gyro.roll(), _gyro.pitch(), _gyro.yaw());
+        runPidOptimizer(processor.millisecondsTimestamp());
+        calculatePidIntegral(gyro_roll, gyro_pitch, gyro_yaw, delta_time_seconds);
     }
     else
     {
         resetPid();
     }
 
-    // To debug stuff
-    // print();
-    // printConstants();
-    // printThrottle();
-    // printGyro();
+    runMotors(gyro_roll, gyro_pitch, gyro_yaw, delta_time_seconds);
 
-    // Run the motors with the calculated PID throttle
-    runMotors(_gyro.roll(), _gyro.pitch(), _gyro.yaw(), delta_time_seconds);
-
-    savePidErrors(_gyro.roll(), _gyro.pitch(), _gyro.yaw());
+    savePidErrors(gyro_roll, gyro_pitch, gyro_yaw);
 
     return true;
 }
 
-void KlevebrandMaxJetDrone::runMotors(float gyro_roll, float gyro_pitch, float gyro_yaw, float delta_time_seconds)
+void KlevebrandMaxJetDrone::setupMotors()
 {
-    // Not implemented
+    for (int i = 0; i < motor_pin_count; i++)
+    {
+        if (_motor_pins[i] != -1)
+        {
+            _motors[i].setup(_motor_pins[i]);
+        }
+    }
+
+    stopMotors();
+
+    delay(1000);
+}
+
+void KlevebrandMaxJetDrone::stopMotors()
+{
+    motor().setSpeed(0);
+    aileron_left().setSpeed(0);
+    aileron_right().setSpeed(0);
+    rudder_left().setSpeed(0);
+    rudder_right().setSpeed(0);
+    flap_left().setSpeed(0);
+    flap_right().setSpeed(0);
+}
+
+void KlevebrandMaxJetDrone::runMotors(const float gyro_roll, const float gyro_pitch, const float gyro_yaw,
+                                      const float delta_time_seconds)
+{
+    (void)gyro_roll;
+    (void)gyro_pitch;
+    (void)gyro_yaw;
+    (void)delta_time_seconds;
+}
+
+void KlevebrandMaxJetDrone::attachMotors() const
+{
+    motor().attach();
+    aileron_left().attach();
+    aileron_right().attach();
+    rudder_left().attach();
+    rudder_right().attach();
+    flap_left().attach();
+    flap_right().attach();
+}
+
+void KlevebrandMaxJetDrone::detachMotors() const
+{
+    motor().detach();
+    aileron_left().detach();
+    aileron_right().detach();
+    rudder_left().detach();
+    rudder_right().detach();
+    flap_left().detach();
+    flap_right().detach();
+}
+
+void KlevebrandMaxJetDrone::enableMotors()
+{
+    attachMotors();
+    MaxJetDroneBase::enableMotors();
+}
+
+void KlevebrandMaxJetDrone::disableMotors()
+{
+    Serial.println("DISABLING MOTORS");
+    setThrottle(0);
+    stopMotors();
+    resetPid();
+    MaxJetDroneBase::disableMotors();
+    detachMotors();
 }

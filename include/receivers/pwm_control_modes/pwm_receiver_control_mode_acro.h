@@ -1,5 +1,5 @@
-#ifndef KLEVEBRAND_MAXFLY_DRONE_PWM_RECEIVER_CONTROL_MODE_ACRO_H
-#define KLEVEBRAND_MAXFLY_DRONE_PWM_RECEIVER_CONTROL_MODE_ACRO_H
+#ifndef KLEVEBRAND_MAXJET_DRONE_PWM_RECEIVER_CONTROL_MODE_ACRO_H
+#define KLEVEBRAND_MAXJET_DRONE_PWM_RECEIVER_CONTROL_MODE_ACRO_H
 
 #include "receivers/pwm_control_modes/base_pwm_receiver_control_mode.h"
 
@@ -9,7 +9,12 @@ public:
     ControlMode_t controlModeType() const override;
 
     void applyThrottleRudderAileron(KlevebrandMaxJetDrone* drone, int throttle_pwm, int yaw_pwm, int pitch_pwm,
-                                   int roll_pwm, int flap_pwm) const override;
+                                   int roll_pwm) const override;
+
+private:
+    static float normalizePwm(int pwm_microseconds);
+
+    static float applyExpo(float input, float expo);
 };
 
-#endif // KLEVEBRAND_MAXFLY_DRONE_PWM_RECEIVER_CONTROL_MODE_ACRO_H
+#endif // KLEVEBRAND_MAXJET_DRONE_PWM_RECEIVER_CONTROL_MODE_ACRO_H

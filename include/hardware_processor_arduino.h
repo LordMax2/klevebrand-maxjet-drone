@@ -1,14 +1,11 @@
 #pragma once
 
 #include "Arduino.h"
-#include "base_hardware_processor.h"
 
-class HardwareProcessorArduino : public BaseHardwareProcessor
+class HardwareProcessorArduino
 {
 public:
-  HardwareProcessorArduino() : BaseHardwareProcessor() {};
-
-  void setup() override
+  void setup()
   {
     Serial.begin(115200);
 
@@ -21,23 +18,24 @@ public:
     }
   }
 
-  unsigned long microsecondsTimestamp() override
+  unsigned long microsecondsTimestamp()
   {
     return micros();
   }
 
-  unsigned long millisecondsTimestamp() override
+  unsigned long millisecondsTimestamp()
   {
     return millis();
   }
 
-  void sleepMilliseconds(int milliseconds) override
+  void sleepMilliseconds(const int milliseconds)
   {
     delay(milliseconds);
   }
 
-  void print(const char *array) override
+  void print(const char *array)
   {
     Serial.println(array);
   }
+
 };
