@@ -90,13 +90,13 @@ void KlevebrandMaxJetDrone::setupMotors()
 
 void KlevebrandMaxJetDrone::stopMotors()
 {
-    motor().setSpeed(0);
-    aileronLeft().setSpeed(0);
-    aileronRight().setSpeed(0);
-    rudderLeft().setSpeed(0);
-    rudderRight().setSpeed(0);
-    flapLeft().setSpeed(0);
-    flapRight().setSpeed(0);
+    motor().setSpeed(50);
+    aileronLeft().setSpeed(50);
+    aileronRight().setSpeed(50);
+    rudderLeft().setSpeed(50);
+    rudderRight().setSpeed(50);
+    flapLeft().setSpeed(50);
+    flapRight().setSpeed(50);
 }
 
 void KlevebrandMaxJetDrone::runMotors(const float gyro_roll, const float gyro_pitch, const float gyro_yaw,

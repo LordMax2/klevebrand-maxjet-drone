@@ -21,30 +21,28 @@ void PwmReceiverControlModeAcro::applyThrottleRudderAileron(KlevebrandMaxJetDron
                                                 AirplaneVtailPid::THROTTLE_MAXIMUM);
     drone->motor().setSpeed(throttle_value_normalized);
 
-    float desired_yaw_angle_right = map(yaw_pwm, 1000, 2000, 90, 0);
-    float desired_yaw_angle_left = map(yaw_pwm, 1000, 2000, 0, 90);
+    float desired_yaw_angle = map(yaw_pwm, 1000, 2000, 20, 80);
 
-    if (desired_yaw_angle_left < 3) desired_yaw_angle_left = 0;
-    if (desired_yaw_angle_right < 3) desired_yaw_angle_right = 0;
+    if (desired_yaw_angle < 3) desired_yaw_angle = 0;
 
-    float desired_pitch_angle_right = map(pitch_pwm, 1000, 2000, 90, 0);
-    float desired_pitch_angle_left = map(pitch_pwm, 1000, 2000, 0, 90);
+    float desired_pitch_angle_right = map(pitch_pwm, 1000, 2000, 90, 10);
+    float desired_pitch_angle_left = map(pitch_pwm, 1000, 2000, 10, 90);
 
-    float desired_roll_angle_right = map(roll_pwm, 1000, 2000, 0, 90);
-    float desired_roll_angle_left = map(roll_pwm, 1000, 2000, 0, 90);
+    float desired_roll_angle_right = map(roll_pwm, 1000, 2000, 90, 10);
+    float desired_roll_angle_left = map(roll_pwm, 1000, 2000, 90, 10);
 
-    float desired_aileron_right = map(desired_roll_angle_right + desired_pitch_angle_right, 0, 180, 0, 90);
-    float desired_aileron_left = map(desired_roll_angle_left + desired_pitch_angle_left, 0, 180, 0, 90);
+    float desired_aileron_right = map(desired_roll_angle_right + desired_pitch_angle_right, 0, 180, 10, 90);
+    float desired_aileron_left = map(desired_roll_angle_left + desired_pitch_angle_left, 0, 180, 10, 90);
 
     drone->aileronLeft().setSpeed(desired_aileron_left);
     drone->aileronRight().setSpeed(desired_aileron_right);
 
-    drone->rudderRight().setSpeed(desired_yaw_angle_right);
-    drone->rudderLeft().setSpeed(desired_yaw_angle_left);
+    drone->rudderRight().setSpeed(desired_yaw_angle);
+    drone->rudderLeft().setSpeed(desired_yaw_angle);
 
     const int flap_pwm = PwmReceiverController::getChannelValue(6);
-    float desired_flap_right = map(flap_pwm, 1000, 2000, 50, 0);
-    float desired_flap_left = map(flap_pwm, 1000, 2000, 50, 100);
+    float desired_flap_right = map(flap_pwm, 1000, 2000, 50, 100);
+    float desired_flap_left = map(flap_pwm, 1000, 2000, 50, 0);
 
     drone->flapRight().setSpeed(desired_flap_right);
     drone->flapLeft().setSpeed(desired_flap_left);
