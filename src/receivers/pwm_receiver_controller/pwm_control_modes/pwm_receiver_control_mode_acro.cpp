@@ -25,17 +25,14 @@ void PwmReceiverControlModeAcro::applyThrottleRudderAileron(KlevebrandMaxJetDron
 
     if (desired_yaw_angle < 3) desired_yaw_angle = 0;
 
-    float desired_pitch_angle_right = map(pitch_pwm, 1000, 2000, 90, 10);
-    float desired_pitch_angle_left = map(pitch_pwm, 1000, 2000, 10, 90);
+    const float pitch = normalizePwm(pitch_pwm);
+    const float roll = normalizePwm(roll_pwm);
 
-    float desired_roll_angle_right = map(roll_pwm, 1000, 2000, 90, 10);
-    float desired_roll_angle_left = map(roll_pwm, 1000, 2000, 90, 10);
+    const float aileron_left = constrain(50.0f + pitch * 50.0f - roll * 50.0f, 0.0f, 100.0f);
+    const float aileron_right = constrain(50.0f - pitch * 50.0f - roll * 50.0f, 0.0f, 100.0f);
 
-    float desired_aileron_right = map(desired_roll_angle_right + desired_pitch_angle_right, 0, 180, 10, 90);
-    float desired_aileron_left = map(desired_roll_angle_left + desired_pitch_angle_left, 0, 180, 10, 90);
-
-    drone->aileronLeft().setSpeed(desired_aileron_left);
-    drone->aileronRight().setSpeed(desired_aileron_right);
+    drone->aileronLeft().setSpeed(aileron_left);
+    drone->aileronRight().setSpeed(aileron_right);
 
     drone->rudderRight().setSpeed(desired_yaw_angle);
     drone->rudderLeft().setSpeed(desired_yaw_angle);
